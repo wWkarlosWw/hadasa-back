@@ -1,47 +1,65 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum OrgType {
+  CHARITY
+  NGO
+  COLLABORATOR
+}
+
+enum userRole {
+  USER
+  ADMIN
+  SUPERVISOR
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  ci    String
-  name  String
-  email String  @unique
-  password String
-  role String @default("user")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  ci        String   @unique
+  name      String
+  email     String   @unique
+  password  String
+  role      userRole @default(USER)
   createdAt DateTime @default(now())
-  phone String
-  address String
-  isActive Boolean @default(true)
+  phone     String
+  address   String
+  isActive  Boolean  @default(true)
 }
 
 model Organization {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
-  password String
-  createdAt DateTime @default(now())
-  address String
-  isActive Boolean @default(true)
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String      @unique
+  password  String
+  type      OrgType     @default(CHARITY)
+  createdAt DateTime    @default(now())
+  address   String
+  isActive  Boolean     @default(true)
+  events    Event[]
+  discounts Discounts[]
 }
 
-model Event{
-  id    Int     @id @default(autoincrement())
-  name  String
-  description String
-  date DateTime @default(now())
-  createdAt DateTime @default(now())
-  isActive Boolean @default(true)
-  organizationId Int
-  organization Organization @relation(fields: [organizationId], references: [id])
+model Event {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String
+  date           DateTime     @default(now())
+  createdAt      DateTime     @default(now())
+  isActive       Boolean      @default(true)
+  organizationId String       @db.ObjectId
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+model Discounts {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  code           String
+  discount       Float
+  organizationId String       @db.ObjectId
+  organization   Organization @relation(fields: [organizationId], references: [id])
 }

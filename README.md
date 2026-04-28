@@ -1,99 +1,170 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Contexto del Proyecto: Plataforma Multi-Donaciones Hadassa
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### 1. ¿Cuál es el propósito moral/de la aplicación?
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- **Propósito Moral:** Fundamentado en principios cristianos (amor, fe, compasión y justicia), busca la restauración espiritual e integral de poblaciones en alto estado de vulnerabilidad, enfocándose en sanar y transformar las vidas de mujeres y niños para que florezcan en propósito e identidad.
+- **Propósito de la Aplicación:** Ser un ecosistema digital que centraliza la solidaridad. Actúa como una plataforma multi-donaciones que no solo facilita el aporte de recursos, sino que incentiva y fideliza la participación ciudadana a través de un sistema gamificado (obtención de puntos canjeables por descuentos o premios al donar y participar en actividades).
 
-## Description
+### 2. ¿A quién está dirigida?
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+La plataforma conecta a tres sectores fundamentales:
 
-## Project setup
+- **Usuarios (Donantes y Voluntarios):** Personas con vocación de servicio que desean aportar financieramente o participar en actividades, obteniendo a cambio beneficios tangibles por su generosidad.
+- **Organizaciones y Colaboradores:** La Fundación Hadassa (como gestora de proyectos como "Casa de Fruto" y organizadora de eventos) y las empresas aliadas que proporcionan los descuentos y premios.
+- **Beneficiarios Finales:** Mujeres y niños en situación de vulnerabilidad (ej. hijos de mujeres recluidas en el Centro de Orientación Femenina de Obrajes en La Paz) que reciben apoyo escolar, médico, dental y desarrollo integral.
 
-```bash
-$ npm install
-```
+### 3. ¿Qué problema resuelve?
 
-## Compile and run the project
+- **Falta de retención y recurrencia en donantes:** Resuelve la caída de interés en la ayuda social al ofrecer un sistema de puntos y recompensas que estimula a los usuarios a donar y participar en eventos de manera continua.
+- **Descentralización de la gestión social:** Unifica en un solo entorno digital la recaudación de fondos, la inscripción a actividades, la publicación de noticias y la cartelera de eventos, optimizando la administración de la fundación.
+- **Sostenibilidad de los programas de ayuda:** Garantiza un flujo más constante de recursos e interacción para sostener proyectos vitales (educación, salud y apoyo espiritual), generando un impacto positivo a largo plazo en la sociedad.
 
-```bash
-# development
-$ npm run start
+# Hadassa Backend
 
-# watch mode
-$ npm run start:dev
+API REST desarrollada con NestJS y Prisma para gestionar una plataforma de apoyo social.
 
-# production mode
-$ npm run start:prod
-```
+## Tecnologías
 
-## Run tests
+- **NestJS** - Framework backend
+- **Prisma** - ORM para MongoDB
+- **MongoDB** - Base de datos
+
+<!-- mas adelante multi db -->
+
+## Requisitos
+
+- Node.js 18+
+- MongoDB (local o Atlas)
+- npm
+
+## Configuración
+
+### 1. Instalar dependencias
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+### 2. Configurar base de datos
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Editar `.env` con la URI de MongoDB:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```
+DATABASE_URL="mongodb://localhost:27017/hadassa"
+```
+
+### 3. Generar cliente Prisma
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npx prisma generate
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 4. Sincronizar base de datos
 
-## Resources
+```bash
+npx prisma db push
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Ejecutar
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Desarrollo
 
-## Support
+```bash
+npm run start:dev
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Producción
 
-## Stay in touch
+```bash
+npm run build
+npm run start:prod
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Modelos de Datos
 
-## License
+### User
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# hadasa-back
+| Campo     | Tipo     | Descripción             |
+| --------- | -------- | ----------------------- |
+| id        | String   | ID único (ObjectId)     |
+| ci        | String   | Carnet de identidad     |
+| name      | String   | Nombre completo         |
+| email     | String   | Correo electrónico      |
+| password  | String   | Contraseña              |
+| role      | Enum     | USER, ADMIN, SUPERVISOR |
+| phone     | String   | Teléfono                |
+| address   | String   | Dirección               |
+| isActive  | Boolean  | Estado activo           |
+| createdAt | DateTime | Fecha de creación       |
+
+### Organization
+
+| Campo     | Tipo     | Descripción                |
+| --------- | -------- | -------------------------- |
+| id        | String   | ID único (ObjectId)        |
+| name      | String   | Nombre                     |
+| email     | String   | Correo electrónico         |
+| password  | String   | Contraseña                 |
+| type      | Enum     | CHARITY, NGO, COLLABORATOR |
+| address   | String   | Dirección                  |
+| isActive  | Boolean  | Estado activo              |
+| createdAt | DateTime | Fecha de creación          |
+
+### Event
+
+| Campo          | Tipo     | Descripción               |
+| -------------- | -------- | ------------------------- |
+| id             | String   | ID único (ObjectId)       |
+| name           | String   | Nombre del evento         |
+| description    | String   | Descripción               |
+| date           | DateTime | Fecha del evento          |
+| isActive       | Boolean  | Estado activo             |
+| organizationId | String   | Referencia a Organization |
+
+### Discounts
+
+| Campo          | Tipo   | Descripción               |
+| -------------- | ------ | ------------------------- |
+| id             | String | ID único (ObjectId)       |
+| code           | String | Código de descuento       |
+| discount       | Float  | Porcentaje de descuento   |
+| organizationId | String | Referencia a Organization |
+
+## Estructura del Proyecto
+
+```
+src/
+├── main.ts              # Punto de entrada
+├── app.module.ts       # Módulo principal
+├── app.controller.ts   # Controlador raíz
+├── app.service.ts      # Servicio raíz
+└── user/
+    ├── user.module.ts
+    ├── user.controller.ts
+    ├── user.service.ts
+    ├── user.controller.spec.ts
+    ├── user.service.spec.ts
+    ├── dto/
+    │   ├── create-user.dto.ts
+    │   └── update-user.dto.ts
+    └── entities/
+        └── user.entity.ts
+```
+
+## Scripts Disponibles
+
+| Comando             | Descripción                |
+| ------------------- | -------------------------- |
+| `npm run start`     | Iniciar servidor           |
+| `npm run start:dev` | Iniciar en modo desarrollo |
+| `npm run build`     | Compilar para producción   |
+| `npm run lint`      | Verificar código           |
+| `npm run test`      | Ejecutar pruebas           |
+
+## Puerto
+
+El servidor corre en el puerto `3000` por defecto. Para cambiar:
+
+```bash
+PORT=4000 npm run start
+```
