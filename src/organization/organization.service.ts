@@ -6,13 +6,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { Types } from 'mongoose';
+import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { UpdateOrganizationDto } from './dto/update-organization.dto';
 
 @Injectable()
-export class UserService {
-  private readonly logger = new Logger(UserService.name);
+export class OrganizationService {
+  private readonly logger = new Logger(OrganizationService.name);
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -21,30 +21,22 @@ export class UserService {
     return new Types.ObjectId(id).toString() === id;
   }
 
-  async create(createUserDto: CreateUserDto) {
-    const existingByEmail = await this.prisma.user.findUnique({
-      where: { email: createUserDto.email },
+  async create(createOrganizationDto: CreateOrganizationDto) {
+    const existing = await this.prisma.organization.findUnique({
+      where: { email: createOrganizationDto.email },
     });
-    if (existingByEmail) {
+    if (existing) {
       throw new BadRequestException(
-        `User with email "${createUserDto.email}" already exists`,
+        `Organization with email "${createOrganizationDto.email}" already exists`,
       );
     }
-    const existingByCi = await this.prisma.user.findUnique({
-      where: { ci: createUserDto.ci },
-    });
-    if (existingByCi) {
-      throw new BadRequestException(
-        `User with ci "${createUserDto.ci}" already exists`,
-      );
-    }
-    return this.prisma.user.create({
-      data: createUserDto,
+    return this.prisma.organization.create({
+      data: createOrganizationDto,
     });
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.organization.findMany();
   }
 
   async findOne(id: string) {
@@ -52,11 +44,13 @@ export class UserService {
       throw new BadRequestException('Invalid ID format');
     }
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException(`User with ID "${id}" not found`);
+      const organization = await this.prisma.organization.findUnique({
+        where: { id },
+      });
+      if (!organization) {
+        throw new NotFoundException(`Organization with ID "${id}" not found`);
       }
-      return user;
+      return organization;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(message);
@@ -65,18 +59,20 @@ export class UserService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
     if (!this.isValidObjectId(id)) {
       throw new BadRequestException('Invalid ID format');
     }
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException(`User with ID "${id}" not found`);
-      }
-      return this.prisma.user.update({
+      const organization = await this.prisma.organization.findUnique({
         where: { id },
-        data: updateUserDto,
+      });
+      if (!organization) {
+        throw new NotFoundException(`Organization with ID "${id}" not found`);
+      }
+      return this.prisma.organization.update({
+        where: { id },
+        data: updateOrganizationDto,
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -91,11 +87,13 @@ export class UserService {
       throw new BadRequestException('Invalid ID format');
     }
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException(`User with ID "${id}" not found`);
+      const organization = await this.prisma.organization.findUnique({
+        where: { id },
+      });
+      if (!organization) {
+        throw new NotFoundException(`Organization with ID "${id}" not found`);
       }
-      return this.prisma.user.delete({
+      return this.prisma.organization.delete({
         where: { id },
       });
     } catch (error: unknown) {
