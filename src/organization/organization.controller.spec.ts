@@ -1,18 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { OrganizationController } from './organization.controller';
+import { OrganizationService } from './organization.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
-describe('UserController', () => {
-  let controller: UserController;
+describe('OrganizationController', () => {
+  let controller: OrganizationController;
 
-  const mockUser = {
+  const mockOrganization = {
     id: '507f1f77bcf86cd799439011',
-    name: 'Test User',
-    email: 'test@example.com',
-    ci: '12345678',
-    password: 'password123',
-    role: 'user',
+    name: 'Test Org',
+    email: 'test@org.com',
+    address: 'Test Address',
+    phone: '123456789',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -23,16 +22,15 @@ describe('UserController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-    login: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-      providers: [{ provide: UserService, useValue: mockService }],
+      controllers: [OrganizationController],
+      providers: [{ provide: OrganizationService, useValue: mockService }],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    controller = module.get<OrganizationController>(OrganizationController);
 
     jest.clearAllMocks();
   });
@@ -43,19 +41,19 @@ describe('UserController', () => {
 
   describe('create', () => {
     const createDto = {
-      name: 'Test User',
-      email: 'test@example.com',
-      ci: '12345678',
+      name: 'Test Org',
+      email: 'test@org.com',
       password: 'password123',
+      address: 'Test Address',
     };
 
-    it('should create a user', async () => {
-      mockService.create.mockResolvedValue(mockUser);
+    it('should create an organization', async () => {
+      mockService.create.mockResolvedValue(mockOrganization);
 
       const result = await controller.create(createDto);
 
       expect(mockService.create).toHaveBeenCalledWith(createDto);
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(mockOrganization);
     });
 
     it('should throw BadRequestException when email exists', async () => {
@@ -63,23 +61,23 @@ describe('UserController', () => {
         new BadRequestException('Email already exists'),
       );
 
-      await expect(controller.create(createDto)).rejects.toThrow(
+      await expect(controller.create(createDto as any)).rejects.toThrow(
         BadRequestException,
       );
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of users', async () => {
-      mockService.findAll.mockResolvedValue([mockUser]);
+    it('should return an array of organizations', async () => {
+      mockService.findAll.mockResolvedValue([mockOrganization]);
 
       const result = await controller.findAll();
 
       expect(mockService.findAll).toHaveBeenCalled();
-      expect(result).toEqual([mockUser]);
+      expect(result).toEqual([mockOrganization]);
     });
 
-    it('should return empty array when no users exist', async () => {
+    it('should return empty array when no organizations exist', async () => {
       mockService.findAll.mockResolvedValue([]);
 
       const result = await controller.findAll();
@@ -91,13 +89,13 @@ describe('UserController', () => {
   describe('findOne', () => {
     const validId = '507f1f77bcf86cd799439011';
 
-    it('should return a user by id', async () => {
-      mockService.findOne.mockResolvedValue(mockUser);
+    it('should return an organization by id', async () => {
+      mockService.findOne.mockResolvedValue(mockOrganization);
 
       const result = await controller.findOne(validId);
 
       expect(mockService.findOne).toHaveBeenCalledWith(validId);
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(mockOrganization);
     });
 
     it('should throw BadRequestException for invalid id', async () => {
@@ -112,7 +110,7 @@ describe('UserController', () => {
 
     it('should throw NotFoundException when not found', async () => {
       mockService.findOne.mockRejectedValue(
-        new NotFoundException('User not found'),
+        new NotFoundException('Organization not found'),
       );
 
       await expect(controller.findOne(validId)).rejects.toThrow(
@@ -123,23 +121,23 @@ describe('UserController', () => {
 
   describe('update', () => {
     const validId = '507f1f77bcf86cd799439011';
-    const updateDto = { name: 'Updated User' };
+    const updateDto = { name: 'Updated Org' };
 
-    it('should update a user', async () => {
+    it('should update an organization', async () => {
       mockService.update.mockResolvedValue({
-        ...mockUser,
+        ...mockOrganization,
         ...updateDto,
       });
 
       const result = await controller.update(validId, updateDto);
 
       expect(mockService.update).toHaveBeenCalledWith(validId, updateDto);
-      expect(result.name).toBe('Updated User');
+      expect(result.name).toBe('Updated Org');
     });
 
     it('should throw NotFoundException when not found', async () => {
       mockService.update.mockRejectedValue(
-        new NotFoundException('User not found'),
+        new NotFoundException('Organization not found'),
       );
 
       await expect(controller.update(validId, updateDto)).rejects.toThrow(
@@ -151,71 +149,22 @@ describe('UserController', () => {
   describe('remove', () => {
     const validId = '507f1f77bcf86cd799439011';
 
-    it('should delete a user', async () => {
-      mockService.remove.mockResolvedValue(mockUser);
+    it('should delete an organization', async () => {
+      mockService.remove.mockResolvedValue(mockOrganization);
 
       const result = await controller.remove(validId);
 
       expect(mockService.remove).toHaveBeenCalledWith(validId);
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(mockOrganization);
     });
 
     it('should throw NotFoundException when not found', async () => {
       mockService.remove.mockRejectedValue(
-        new NotFoundException('User not found'),
+        new NotFoundException('Organization not found'),
       );
 
       await expect(controller.remove(validId)).rejects.toThrow(
         NotFoundException,
-      );
-    });
-  });
-
-  describe('login', () => {
-    const loginDto = {
-      email: 'test@example.com',
-      password: 'password123',
-    };
-
-    it('should login user and return user info', async () => {
-      mockService.login.mockResolvedValue({
-        id: mockUser.id,
-        name: mockUser.name,
-        email: mockUser.email,
-        role: mockUser.role,
-      });
-
-      const result = await controller.login(loginDto);
-
-      expect(mockService.login).toHaveBeenCalledWith(
-        loginDto.email,
-        loginDto.password,
-      );
-      expect(result).toEqual({
-        id: mockUser.id,
-        name: mockUser.name,
-        email: mockUser.email,
-        role: mockUser.role,
-      });
-    });
-
-    it('should throw NotFoundException when user not found', async () => {
-      mockService.login.mockRejectedValue(
-        new NotFoundException('User not found'),
-      );
-
-      await expect(controller.login(loginDto)).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
-    it('should throw BadRequestException when credentials invalid', async () => {
-      mockService.login.mockRejectedValue(
-        new BadRequestException('Invalid credentials'),
-      );
-
-      await expect(controller.login(loginDto)).rejects.toThrow(
-        BadRequestException,
       );
     });
   });

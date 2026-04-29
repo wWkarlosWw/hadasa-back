@@ -105,4 +105,25 @@ export class UserService {
       throw new InternalServerErrorException('Database error');
     }
   }
+
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email "${email}" not found`);
+    }
+
+    if (user.password !== password) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+  }
 }
