@@ -1,58 +1,40 @@
-# compiled output
-/dist
-/node_modules
-/build
+# Created by codeshack.io
 
-# Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+### Linux ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
 
-# OS
-.DS_Store
-
-# Tests
-/coverage
-/.nyc_output
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
+### VS Code ###
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.code-workspace
 
-# dotenv environment variable files
+### Node.js ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+dist/
 .env
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
+.DS_Store
+coverage/
+.nyc_output/
 
-# temp directory
-.temp
-.tmp
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-/generated/prisma
+### NestJS ###
+build/
+logs/
+*.log
+temp/
+tmp/
