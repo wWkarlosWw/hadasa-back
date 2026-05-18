@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Types } from 'mongoose';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -38,13 +39,31 @@ export class UserService {
         `User with ci "${createUserDto.ci}" already exists`,
       );
     }
+
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
     return this.prisma.user.create({
-      data: createUserDto,
+      data: {
+        ...createUserDto,
+        password: hashedPassword,
+      },
     });
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        ci: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        phone: true,
+        address: true,
+        isActive: true,
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -52,7 +71,20 @@ export class UserService {
       throw new BadRequestException('Invalid ID format');
     }
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          ci: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          phone: true,
+          address: true,
+          isActive: true,
+        },
+      });
       if (!user) {
         throw new NotFoundException(`User with ID "${id}" not found`);
       }
@@ -70,13 +102,32 @@ export class UserService {
       throw new BadRequestException('Invalid ID format');
     }
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      });
       if (!user) {
         throw new NotFoundException(`User with ID "${id}" not found`);
       }
+
+      const updateData = { ...updateUserDto };
+      if (updateUserDto.password) {
+        updateData.password = await bcrypt.hash(updateUserDto.password, 10);
+      }
+
       return this.prisma.user.update({
         where: { id },
-        data: updateUserDto,
+        data: updateData,
+        select: {
+          id: true,
+          ci: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          phone: true,
+          address: true,
+          isActive: true,
+        },
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -91,7 +142,9 @@ export class UserService {
       throw new BadRequestException('Invalid ID format');
     }
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      });
       if (!user) {
         throw new NotFoundException(`User with ID "${id}" not found`);
       }
@@ -104,26 +157,5 @@ export class UserService {
       if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Database error');
     }
-  }
-
-  async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new NotFoundException(`User with email "${email}" not found`);
-    }
-
-    if (user.password !== password) {
-      throw new BadRequestException('Invalid credentials');
-    }
-
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    };
   }
 }

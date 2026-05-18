@@ -13,7 +13,7 @@ enum OrgType {
   COLLABORATOR
 }
 
-enum userRole {
+enum UserRole {
   USER
   ADMIN
   SUPERVISOR
@@ -25,7 +25,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      userRole @default(USER)
+  role      UserRole @default(USER)
   createdAt DateTime @default(now())
   phone     String
   address   String
