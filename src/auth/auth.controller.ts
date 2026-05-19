@@ -13,4 +13,19 @@ export class AuthController {
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
+
+  @Public()
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  register(
+    @Body()
+    body: {
+      name: string;
+      email: string;
+      phone: string;
+      password: string;
+    },
+  ) {
+    return this.authService.register(body);
+  }
 }

@@ -60,4 +60,49 @@ export class AuthService {
 
     return user;
   }
+
+  async register(data: {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+  }): Promise<AuthResponse> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      throw new UnauthorizedException('El usuario ya existe');
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const user = await this.prisma.user.create({
+      data: {
+        ci: '',
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: '',
+        password: hashedPassword,
+        role: 'USER',
+        isActive: true,
+      },
+    });
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      accessToken: token,
+      tokenType: 'Bearer',
+      expiresIn: '7d',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  }
 }
