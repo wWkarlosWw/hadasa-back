@@ -79,7 +79,7 @@ export class AuthService {
 
     const user = await this.prisma.user.create({
       data: {
-        ci: '',
+        ci: `CI-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         name: data.name,
         email: data.email,
         phone: data.phone,
