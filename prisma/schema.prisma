@@ -19,6 +19,24 @@ enum UserRole {
   SUPERVISOR
 }
 
+enum DonationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ParticipationStatus {
+  REGISTERED
+  ATTENDED
+  CANCELLED
+}
+
+enum ClaimStatus {
+  PENDING
+  REDEEMED
+  CANCELLED
+}
+
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   ci        String   @unique
@@ -26,23 +44,33 @@ model User {
   email     String   @unique
   password  String
   role      UserRole @default(USER)
+  points    Int      @default(0)
   createdAt DateTime @default(now())
   phone     String
   address   String
   isActive  Boolean  @default(true)
+
+  donations            Donation[]
+  eventParticipation   EventParticipation[]
+  eventSupervisions    EventSupervisor[]
+  claimedDiscounts     ClaimedDiscount[]
+  validatedDonations   Donation[]           @relation("ValidatedDonations")
+  validatedAttendances EventParticipation[] @relation("ValidatedAttendances")
 }
 
 model Organization {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  email     String      @unique
+  email     String   @unique
   password  String
-  type      OrgType     @default(CHARITY)
-  createdAt DateTime    @default(now())
+  type      OrgType  @default(CHARITY)
+  createdAt DateTime @default(now())
   address   String
-  isActive  Boolean     @default(true)
+  isActive  Boolean  @default(true)
+
   events    Event[]
   discounts Discounts[]
+  donations Donation[]
 }
 
 model Event {
@@ -54,12 +82,74 @@ model Event {
   isActive       Boolean      @default(true)
   organizationId String       @db.ObjectId
   organization   Organization @relation(fields: [organizationId], references: [id])
+
+  participants   EventParticipation[]
+  supervisors    EventSupervisor[]
+  eventDonations Donation[]
 }
 
 model Discounts {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
   code           String
+  description    String       @default("")
   discount       Float
+  pointsRequired Int          @default(100)
+  isActive       Boolean      @default(true)
   organizationId String       @db.ObjectId
   organization   Organization @relation(fields: [organizationId], references: [id])
+
+  claimedBy ClaimedDiscount[]
+}
+
+model Donation {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  amount         Float
+  status         DonationStatus @default(PENDING)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  userId         String         @db.ObjectId
+  user           User           @relation(fields: [userId], references: [id])
+  organizationId String         @db.ObjectId
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  eventId        String?        @db.ObjectId
+  event          Event?         @relation(fields: [eventId], references: [id])
+  validatedBy    String?        @db.ObjectId
+  validator      User?          @relation("ValidatedDonations", fields: [validatedBy], references: [id])
+}
+
+model EventParticipation {
+  id        String              @id @default(auto()) @map("_id") @db.ObjectId
+  status    ParticipationStatus @default(REGISTERED)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  userId    String              @db.ObjectId
+  user      User                @relation(fields: [userId], references: [id])
+  eventId   String              @db.ObjectId
+  event     Event               @relation(fields: [eventId], references: [id])
+  validatedBy String?           @db.ObjectId
+  validator  User?              @relation("ValidatedAttendances", fields: [validatedBy], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model EventSupervisor {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  eventId   String   @db.ObjectId
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model ClaimedDiscount {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  pointsSpent Int
+  status      ClaimStatus @default(PENDING)
+  claimedAt   DateTime    @default(now())
+  userId      String      @db.ObjectId
+  user        User        @relation(fields: [userId], references: [id])
+  discountId  String      @db.ObjectId
+  discount    Discounts   @relation(fields: [discountId], references: [id])
 }
