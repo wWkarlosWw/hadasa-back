@@ -12,11 +12,17 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('profile')
+  getProfile(@CurrentUser() user: { userId: string; role: string }) {
+    return this.userService.findOne(user.userId);
+  }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
