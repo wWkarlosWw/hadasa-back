@@ -36,7 +36,24 @@ export class OrganizationService {
   }
 
   async findAll() {
-    return this.prisma.organization.findMany();
+    const organizations = await this.prisma.organization.findMany();
+
+    const raisedByOrg = await this.prisma.donation.groupBy({
+      by: ['organizationId'],
+      where: { status: 'APPROVED' },
+      _sum: { amount: true },
+    });
+
+    const raisedMap = new Map<string, number>(
+      raisedByOrg.map((r) => [r.organizationId, r._sum.amount ?? 0]),
+    );
+
+    return organizations.map((org) => ({
+      ...org,
+      password: undefined,
+      raised: raisedMap.get(org.id) ?? 0,
+      donors: 0,
+    }));
   }
 
   async findOne(id: string) {
@@ -50,7 +67,16 @@ export class OrganizationService {
       if (!organization) {
         throw new NotFoundException(`Organization with ID "${id}" not found`);
       }
-      return organization;
+      const raisedAgg = await this.prisma.donation.aggregate({
+        where: { organizationId: id, status: 'APPROVED' },
+        _sum: { amount: true },
+      });
+      return {
+        ...organization,
+        password: undefined,
+        raised: raisedAgg._sum.amount ?? 0,
+        donors: 0,
+      };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(message);

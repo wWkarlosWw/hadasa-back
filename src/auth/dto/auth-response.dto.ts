@@ -9,5 +9,6 @@ export class AuthResponse {
     name: string;
     email: string;
     role: UserRole;
+    points: number;
   };
 }

@@ -59,14 +59,22 @@ model User {
 }
 
 model Organization {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String   @unique
-  password  String
-  type      OrgType  @default(CHARITY)
-  createdAt DateTime @default(now())
-  address   String
-  isActive  Boolean  @default(true)
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  password     String
+  type         OrgType  @default(CHARITY)
+  createdAt    DateTime @default(now())
+  address      String
+  isActive     Boolean  @default(true)
+  goal         Float    @default(0)
+  image        String   @default("")
+  coverImage   String   @default("")
+  tagline      String   @default("")
+  category     String   @default("")
+  location     String   @default("")
+  featured     Boolean  @default(false)
+  beneficiaries Int     @default(0)
 
   events    Event[]
   discounts Discounts[]

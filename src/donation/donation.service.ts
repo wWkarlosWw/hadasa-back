@@ -169,7 +169,7 @@ export class DonationService {
 
       await this.prisma.user.update({
         where: { id: donation.userId },
-        data: { points: { increment: donation.amount } },
+        data: { points: { increment: donation.amount * 10 } },
       });
 
       return this.prisma.donation.update({

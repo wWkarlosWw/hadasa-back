@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsOptional,
   IsBoolean,
+  IsNumber,
   MinLength,
 } from 'class-validator';
 import { OrgType } from '@prisma/client';
@@ -29,4 +30,36 @@ export class CreateOrganizationDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  goal?: number;
+
+  @IsString()
+  @IsOptional()
+  image?: string;
+
+  @IsString()
+  @IsOptional()
+  coverImage?: string;
+
+  @IsString()
+  @IsOptional()
+  tagline?: string;
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  location?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  featured?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  beneficiaries?: number;
 }
